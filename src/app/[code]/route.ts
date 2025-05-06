@@ -6,7 +6,7 @@ const prisma = new PrismaClient(); // Pastikan ini adalah singleton di proyek An
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: Record<string, string> }
+    { params }: { params: { code: string } }
 ): Promise<NextResponse> {
     const { code } = params;
 
