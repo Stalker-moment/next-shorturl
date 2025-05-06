@@ -1,7 +1,7 @@
 // src/app/api/guest/create/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import fetch from "node-fetch";
+// Removed node-fetch as Next.js provides a native fetch API
 import * as cheerio from "cheerio";
 
 const prisma = new PrismaClient();
@@ -22,7 +22,7 @@ const generateShortUrl = () => {
 // Fungsi untuk mendapatkan logo dan header text dari URL
 const fetchMetadata = async (url: string) => {
   try {
-    const response = await fetch(url);
+    const response = await globalThis.fetch(url);
     const html = await response.text();
     const $ = cheerio.load(html);
 
