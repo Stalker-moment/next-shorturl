@@ -6,7 +6,7 @@ const prisma = new PrismaClient(); // Replace with your singleton instance
 export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const pathname = request.nextUrl.pathname;
-  const code = pathname?.split('/')[1]; // Ambil kode dari URL path
+  const code = pathname?.split('/').pop();
 
   if (!code) {
     return NextResponse.json({ error: 'Missing code parameter.' }, { status: 400 });

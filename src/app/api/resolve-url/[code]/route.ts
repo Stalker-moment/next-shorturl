@@ -1,4 +1,3 @@
-// /app/api/resolve-url/[code]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
@@ -8,7 +7,9 @@ export async function GET(
   request: NextRequest
 ): Promise<NextResponse> {
   const pathname = request.nextUrl.pathname;
-  const code = pathname?.split('/')[1]; // Ambil kode dari URL path
+  const code = pathname?.split('/').pop();
+
+  console.log('code', code);
 
   if (!code) {
     return NextResponse.json({ error: 'Missing short code.' }, { status: 400 });
@@ -19,15 +20,22 @@ export async function GET(
       where: { shortUrl: code },
     });
 
-    if (!guestUrl) {
-      return NextResponse.json({ error: 'Short URL not found.' }, { status: 404 });
+    console.log('guestUrl', guestUrl);
+
+    if (!guestUrl || !guestUrl.url) {
+      return NextResponse.json({ error: 'Short URL not found or invalid.' }, { status: 404 });
     }
 
     return NextResponse.json({
       url: guestUrl.url,
       useLanding: guestUrl.useLanding === 'true',
     });
-  } catch {
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Error fetching URL:', error.message);
+    } else {
+      console.error('Error fetching URL:', error);
+    }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

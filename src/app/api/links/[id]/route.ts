@@ -10,7 +10,7 @@ export async function GET(
     try {
   
         const { pathname } = new URL(request.url);
-        const id = pathname.split('/')[1]; // Ambil kode dari URL path
+        const id = pathname.split('/').pop(); // Ambil ID dari URL
 
         if (!id) {
             return NextResponse.json({ error: 'Invalid input. "id" is required.' }, { status: 400 });

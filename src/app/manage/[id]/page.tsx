@@ -1,7 +1,7 @@
 "use client"; // Required for hooks
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -61,13 +61,13 @@ const COPY_TIMEOUT_MS = 2000;
 // --- API Endpoint Placeholders ---
 // !! Replace with your actual API endpoints !!
 const getApiEndpointForLink = (id: string) => `/api/links/${id}`; // Example: GET
-const getApiEndpointForSetting = `/api/setting`; // Example: POST/PATCH
+const getApiEndpointForSetting = `/api/guest/setting`; // Example: POST/PATCH
 
 // --- Main Page Component ---
 export default function ManageLinkPage() {
-  const params = useParams();
   const router = useRouter();
-  const id = params?.id as string;
+  const pathname = usePathname();
+  const id = pathname?.split('/').pop();
 
   // State now uses ApiLinkDetail for the actual data
   const [linkData, setLinkData] = useState<ApiLinkDetail | null>(null);
