@@ -10,7 +10,7 @@ type PageProps = {
 export default async function Page({ params }: PageProps) {
   const { code } = params;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resolve-url/${code}`);
+  const res = await fetch(`/api/resolve-url/${code}`);
   if (!res.ok) {
     redirect('/404');
   }
