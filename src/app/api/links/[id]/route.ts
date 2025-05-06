@@ -1,16 +1,16 @@
 // app/api/guest/setting/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient(); // Pastikan ini adalah singleton di proyek Anda
 
 export async function GET(
-    request: NextRequest,
-    { params }: { params: { id: string } }
-  ): Promise<NextResponse> {
+  request: Request
+): Promise<NextResponse> {
     try {
   
-    const { id } = params;
+        const { pathname } = new URL(request.url);
+        const id = pathname.split('/')[1]; // Ambil kode dari URL path
 
         if (!id) {
             return NextResponse.json({ error: 'Invalid input. "id" is required.' }, { status: 400 });

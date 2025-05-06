@@ -61,7 +61,7 @@ const COPY_TIMEOUT_MS = 2000;
 // --- API Endpoint Placeholders ---
 // !! Replace with your actual API endpoints !!
 const getApiEndpointForLink = (id: string) => `/api/links/${id}`; // Example: GET
-const getApiEndpointForSetting = (id: string) => `/api/links/${id}/setting`; // Example: POST/PATCH
+const getApiEndpointForSetting = `/api/setting`; // Example: POST/PATCH
 
 // --- Main Page Component ---
 export default function ManageLinkPage() {
@@ -165,10 +165,10 @@ export default function ManageLinkPage() {
           "Content-Type": "application/json",
           Accept: "application/json",
         };
-        const response = await fetch(getApiEndpointForSetting(linkData.id), {
+        const response = await fetch(getApiEndpointForSetting, {
           method: "POST", // Or PATCH/PUT depending on your API
           headers: headers,
-          body: JSON.stringify({ useLanding: newCheckedState }),
+          body: JSON.stringify({ code: linkData.shortUrl, useLanding: newCheckedState }),
         });
 
         if (!response.ok) {

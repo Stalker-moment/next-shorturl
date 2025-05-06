@@ -5,10 +5,10 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { code: string } }
+  request: NextRequest
 ): Promise<NextResponse> {
-  const { code } = params;
+  const pathname = request.nextUrl.pathname;
+  const code = pathname?.split('/')[1]; // Ambil kode dari URL path
 
   if (!code) {
     return NextResponse.json({ error: 'Missing short code.' }, { status: 400 });
