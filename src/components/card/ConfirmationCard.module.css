@@ -1,0 +1,28 @@
+/* components/ConfirmationCard.module.css */
+
+.splashScreen {
+    transform: translateY(100%);
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.splashScreenActive {
+    transform: translateY(0%);
+}
+
+@keyframes countdown-tick {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.8; }
+}
+
+.countdownTickAnimation {
+    display: inline-block; /* Required for transform */
+    animation: countdown-tick 0.4s ease-out;
+}
+
+/* Optional: Style for the main card if needed beyond Tailwind */
+/* .card { ... } */
+
+/* Transition for the splash text */
+.splashText {
+    transition: opacity 0.4s ease-in;
+}
