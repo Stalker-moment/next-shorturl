@@ -5,15 +5,18 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "trashapi.tierkun.my.id",
+        hostname: "nyoo-api.tierkun.my.id",
       },
       {
         protocol: "https",
-        hostname: "exp.tierkun.my.id",
+        hostname: "lh3.googleusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
       },
     ],
   },
 };
 
 export default nextConfig;
-

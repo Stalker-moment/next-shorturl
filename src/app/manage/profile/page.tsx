@@ -27,6 +27,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Cropper from "react-easy-crop";
 import { getCroppedImg } from "@/lib/cropImage";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import Image from "next/image";
 
 interface UserStats {
  totalShortlinks: number;
@@ -332,7 +333,7 @@ function ProfilePageContent() {
             <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 p-0.5 shadow-lg">
               <div className="w-full h-full rounded-[14px] bg-white dark:bg-slate-950 overflow-hidden relative">
                 {profile.image ? (
-                  <img src={profile.image} alt={profile.name} className="w-full h-full object-cover" />
+                  <Image src={profile.image} alt={profile.name} fill className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800">
                     <FontAwesomeIcon icon={faUser} className="text-3xl text-slate-400" />

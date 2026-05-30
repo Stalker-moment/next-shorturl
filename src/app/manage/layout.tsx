@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -477,13 +478,16 @@ export default function ManageLayout({
               <LanguageToggle />
               <Link
                 href="/manage/profile"
-                className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-0.5 overflow-hidden active:scale-95 transition-all shrink-0"
+                className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-0.5 overflow-hidden active:scale-95 transition-all shrink-0 relative"
               >
-                {session?.user?.image ? (
-                  <img
-                    src={session.user.image}
-                    alt=""
+                {(profileData?.image || session?.user?.image) ? (
+                  <Image
+                    src={profileData?.image || session?.user?.image}
+                    alt="Profile"
+                    width={40}
+                    height={40}
                     className="w-full h-full object-cover rounded-[10px]"
+                    referrerPolicy="no-referrer"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-900/50 text-slate-400 dark:text-slate-500">

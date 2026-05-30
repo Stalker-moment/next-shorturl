@@ -464,7 +464,11 @@ const LandingUrlShortener: React.FC = () => {
     setCopyError(null);
     setShortenedUrlData(null);
 
-    const trimmedUrl = longUrl.trim();
+    let trimmedUrl = longUrl.trim();
+    if (trimmedUrl && !/^https?:\/\//i.test(trimmedUrl)) {
+      trimmedUrl = "http://" + trimmedUrl;
+    }
+
     if (!trimmedUrl || !isValidUrl(trimmedUrl)) {
       setError(language === 'en' ? 'Enter a valid URL (starting with http:// or https://)' : 'Masukkan URL yang valid (mulai dengan http:// atau https://)');
       setIsLoading(false);

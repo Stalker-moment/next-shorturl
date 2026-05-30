@@ -128,7 +128,7 @@ const Navbar = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="fixed top-[4.5rem] left-0 right-0 z-[100] lg:hidden mx-4 mt-2"
+              className="fixed top-[4.5rem] left-4 right-4 z-[100] lg:hidden mt-2"
             >
               <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl shadow-slate-900/20 overflow-hidden">
                 <nav className="p-4 space-y-1">
