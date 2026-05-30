@@ -14,7 +14,8 @@ export async function GET(
             return NextResponse.json({ error: 'Invalid input. "id" is required.' }, { status: 400 });
         }
 
-        const res = await fetch(`http://localhost:1888/api/links/${id}`);
+        const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1888';
+        const res = await fetch(`${BACKEND_URL}/api/links/${id}`);
         const data = await res.json();
         
         return NextResponse.json(data, { status: res.status });

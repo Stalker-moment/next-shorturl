@@ -8,7 +8,8 @@ export async function POST(
         const body = await request.json();
 
         // Proxy request to backend-shorturl
-        const backendUrl = 'http://localhost:1888/api/guest/setting';
+        const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1888';
+        const backendUrl = `${BACKEND_URL}/api/guest/setting`;
         const response = await fetch(backendUrl, {
             method: 'POST',
             headers: {

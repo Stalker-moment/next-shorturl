@@ -6,7 +6,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     // Proxy request to backend-shorturl Express server
-    const backendUrl = 'http://localhost:1888/api/guest/report-abuse';
+    const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1888';
+    const backendUrl = `${BACKEND_URL}/api/guest/report-abuse`;
     const response = await fetch(backendUrl, {
       method: 'POST',
       headers: {

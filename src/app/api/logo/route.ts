@@ -12,7 +12,8 @@ export async function GET(
             return NextResponse.json({ error: 'Domain is required' }, { status: 400 });
         }
 
-        const res = await fetch(`http://localhost:1888/api/logo?domain=${encodeURIComponent(domain)}`);
+        const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1888';
+        const res = await fetch(`${BACKEND_URL}/api/logo?domain=${encodeURIComponent(domain)}`);
         
         if (!res.ok) {
             return NextResponse.json({ error: 'Logo not found' }, { status: res.status });
