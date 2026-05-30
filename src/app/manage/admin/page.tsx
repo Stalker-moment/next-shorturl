@@ -2345,7 +2345,7 @@ function AdminDashboardContent() {
   }, [activeTab, fetchAdminPastes]);
 
   const updateQueryParams = React.useCallback((updates: Record<string, string | null>) => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(searchParams.toString());
     Object.entries(updates).forEach(([key, value]) => {
       if (value === null) {
         params.delete(key);
@@ -2354,7 +2354,12 @@ function AdminDashboardContent() {
       }
     });
     router.push(`${pathname}?${params.toString()}`);
-  }, [router, pathname]);
+  }, [router, pathname, searchParams]);
+
+  const handleTabChange = (tabId: typeof activeTab) => {
+    setActiveTab(tabId);
+    updateQueryParams({ tab: tabId, linkId: null, userId: null });
+  };
 
   // Synchronize state with URL parameters
   useEffect(() => {
@@ -2664,6 +2669,8 @@ function AdminDashboardContent() {
   };
 
   const handleViewAnalytics = async (link: LinkData) => {
+    setActiveTab("links");
+    setSelectedLink(link);
     updateQueryParams({ tab: "links", linkId: link.id });
   };
 
@@ -2696,6 +2703,7 @@ function AdminDashboardContent() {
   };
 
   const handleCloseModal = () => {
+    setSelectedUser(null);
     updateQueryParams({ userId: null });
     setModalSelectedLink(null);
     setModalAnalyticsData(null);
@@ -2897,7 +2905,7 @@ function AdminDashboardContent() {
         ] as { id: 'stats'|'users'|'links'|'appeals'|'reports'|'pastes'|'dns'|'developers'|'pricing'; icon: typeof faChartLine }[]).map((tab) => (
           <button
             key={tab.id}
-            onClick={() => updateQueryParams({ tab: tab.id, linkId: null, userId: null })}
+            onClick={() => handleTabChange(tab.id)}
             className={`flex-1 min-w-[70px] sm:min-w-[100px] flex items-center justify-center gap-2 px-2 py-1.5 sm:px-4 sm:py-2.5 text-[9px] sm:text-[11px] rounded-lg sm:rounded-xl font-bold transition-all whitespace-nowrap ${
               activeTab === tab.id 
               ? "bg-white dark:bg-indigo-600 text-indigo-600 dark:text-white shadow-sm sm:shadow-md" 
@@ -3122,14 +3130,14 @@ function AdminDashboardContent() {
                       <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
                         <td className="px-4 py-3 sm:px-6 sm:py-3.5">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center font-bold text-xs sm:text-sm text-white shadow-md relative cursor-pointer" onClick={() => updateQueryParams({ userId: u.id })}>
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center font-bold text-xs sm:text-sm text-white shadow-md relative cursor-pointer" onClick={() => { setSelectedUser(u); updateQueryParams({ userId: u.id }); }}>
                               {u.image ? (
                                 <img src={u.image} alt={u.name || 'User'} className="w-full h-full object-cover" />
                               ) : (
                                 u.name?.[0] || u.email[0].toUpperCase()
                               )}
                             </div>
-                            <div className="min-w-0 cursor-pointer" onClick={() => updateQueryParams({ userId: u.id })}>
+                            <div className="min-w-0 cursor-pointer" onClick={() => { setSelectedUser(u); updateQueryParams({ userId: u.id }); }}>
                               <div className="font-bold text-xs sm:text-sm tracking-tight truncate max-w-[100px] sm:max-w-none uppercase hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{u.name || 'User'}</div>
                               <div className="text-[9px] sm:text-[11px] text-slate-400 font-bold truncate max-w-[100px] sm:max-w-none">{u.email}</div>
                             </div>
@@ -3154,7 +3162,7 @@ function AdminDashboardContent() {
                         <td className="px-4 py-3 sm:px-6 sm:py-3.5 text-right">
                           <div className="flex items-center justify-end gap-1.5">
                             <button 
-                              onClick={() => updateQueryParams({ userId: u.id })} 
+                              onClick={() => { setSelectedUser(u); updateQueryParams({ userId: u.id }); }} 
                               className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-indigo-500 bg-indigo-500/10 hover:bg-indigo-600 hover:text-white rounded-lg transition-all"
                             >
                               <FontAwesomeIcon icon={faEye} className="text-xs" />
@@ -3321,7 +3329,7 @@ function AdminDashboardContent() {
                 /* Analytics Details Panel */
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-4">
                   <button 
-                    onClick={() => updateQueryParams({ linkId: null })} 
+                    onClick={() => { setSelectedLink(null); updateQueryParams({ linkId: null }); }} 
                     className="group flex items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-slate-400 bg-white dark:bg-white/5 px-4 py-2 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm"
                   >
                     {t.actions.back}
@@ -4557,7 +4565,11 @@ function AdminDashboardContent() {
               exit={{ opacity: 0, scale: 0.98 }}
               key="pricing"
             >
-              <PricingPlansAdminPanel onInspectUser={(userId) => updateQueryParams({ userId })} />
+              <PricingPlansAdminPanel onInspectUser={(userId) => {
+                const found = users.find(u => u.id === userId);
+                if (found) setSelectedUser(found);
+                updateQueryParams({ userId });
+              }} />
             </motion.div>
           )}
         </AnimatePresence>
