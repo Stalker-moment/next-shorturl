@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ type: string, id: string }> }) {
     const { type, id } = await params;
-    const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:1888";
+    const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || process.env.BACKEND_URL || "http://localhost:1888";
 
     try {
         const res = await fetch(`${BACKEND_URL}/api/track-click/${type}/${id}`, {

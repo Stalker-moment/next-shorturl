@@ -11,7 +11,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ type
 
     const { type, id } = await params;
     const adminId = (session.user as any).id;
-    const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:1888";
+    const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || process.env.BACKEND_URL || "http://localhost:1888";
 
     try {
         const res = await fetch(`${BACKEND_URL}/api/admin/links/${type}/${id}/analytics?adminId=${adminId}`);
