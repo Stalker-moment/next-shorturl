@@ -1,14 +1,12 @@
-// app/api/guest/setting/route.ts
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient(); // Pastikan ini adalah singleton di proyek Anda
+// app/api/links/[id]/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
 
 export async function GET(
   request: Request
 ): Promise<NextResponse> {
     try {
-  
         const { pathname } = new URL(request.url);
         const id = pathname.split('/').pop(); // Ambil ID dari URL
 
@@ -16,17 +14,48 @@ export async function GET(
             return NextResponse.json({ error: 'Invalid input. "id" is required.' }, { status: 400 });
         }
 
-        const guestUrl = await prisma.guesturl.findUnique({
-            where: { id: id },
-        });
+        const res = await fetch(`http://localhost:1888/api/links/${id}`);
+        const data = await res.json();
+        
+        return NextResponse.json(data, { status: res.status });
+    } catch (error) {
+        console.error('Error Proxying retrieving URL:', error);
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    }
+}
 
-        if (!guestUrl) {
-            return NextResponse.json({ error: 'URL not found.' }, { status: 404 });
+export async function DELETE(
+  request: NextRequest
+): Promise<NextResponse> {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session || !session.user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        return NextResponse.json({ message: 'URL retrieved successfully.', data: guestUrl });
+        const { pathname } = new URL(request.url);
+        const id = pathname.split('/').pop(); // Ambil ID dari URL
+
+        if (!id) {
+            return NextResponse.json({ error: 'Invalid input. "id" is required.' }, { status: 400 });
+        }
+
+        const userId = (session.user as { id?: string }).id;
+        const role = (session.user as { role?: string }).role || 'USER';
+
+        const backendUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1888'}/api/user/urls/${id}`;
+        const res = await fetch(backendUrl, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId, role })
+        });
+
+        const data = await res.json();
+        return NextResponse.json(data, { status: res.status });
     } catch (error) {
-        console.error('Error retrieving URL:', error);
+        console.error('Error proxying delete link:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

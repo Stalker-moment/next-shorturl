@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
 
 export async function GET(
   request: NextRequest
@@ -9,33 +6,32 @@ export async function GET(
   const pathname = request.nextUrl.pathname;
   const code = pathname?.split('/').pop();
 
-  console.log('code', code);
-
   if (!code) {
     return NextResponse.json({ error: 'Missing short code.' }, { status: 400 });
   }
 
   try {
-    const guestUrl = await prisma.guesturl.findUnique({
-      where: { shortUrl: code },
-    });
-
-    console.log('guestUrl', guestUrl);
-
-    if (!guestUrl || !guestUrl.url) {
-      return NextResponse.json({ error: 'Short URL not found or invalid.' }, { status: 404 });
+    const headers: Record<string, string> = {
+      'x-forwarded-for': request.headers.get('x-forwarded-for') || '127.0.0.1',
+      'user-agent': request.headers.get('user-agent') || '',
+      'referer': request.headers.get('referer') || '',
+    };
+    const passwordHeader = request.headers.get('x-link-password');
+    if (passwordHeader) {
+      headers['x-link-password'] = passwordHeader;
     }
 
-    return NextResponse.json({
-      url: guestUrl.url,
-      useLanding: guestUrl.useLanding === 'true',
+    const searchParams = request.nextUrl.searchParams.toString();
+    const queryStr = searchParams ? `?${searchParams}` : '';
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1888'}/api/resolve-url/${code}${queryStr}`, {
+      headers,
     });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Error fetching URL:', error.message);
-    } else {
-      console.error('Error fetching URL:', error);
-    }
+    
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status });
+  } catch (error) {
+    console.error('Error proxying to backend resolve-url:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

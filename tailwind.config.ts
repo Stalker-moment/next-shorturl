@@ -1,6 +1,6 @@
 // tailwind.config.js
 module.exports = {
-  darkMode: ['class', 'class'], // Menggunakan kelas untuk dark mode
+  darkMode: 'class', // Menggunakan kelas untuk dark mode
   content: [
     './src/**/*.{js,ts,jsx,tsx}',
     './pages/**/*.{js,ts,jsx,tsx}',
@@ -9,6 +9,9 @@ module.exports = {
   ],
   theme: {
   	extend: {
+      fontFamily: {
+        sans: ['var(--font-plus-jakarta)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
   		colors: {
   			primary: {
   				DEFAULT: 'hsl(var(--primary))',

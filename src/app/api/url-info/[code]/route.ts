@@ -1,10 +1,7 @@
 // app/api/url-info/[code]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client'; // Assuming prisma is setup
-const prisma = new PrismaClient(); // Replace with your singleton instance
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-
   const pathname = request.nextUrl.pathname;
   const code = pathname?.split('/').pop();
 
@@ -13,27 +10,26 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const guestUrl = await prisma.guesturl.findUnique({
-      where: { shortUrl: code },
-      select: { // Only select the field needed
-        url: true
-      }
-    });
-
-    if (guestUrl && guestUrl.url) {
-      // Return the original URL
-      return NextResponse.json({ originalUrl: guestUrl.url });
-    } else {
-      // Code not found in database
-      return NextResponse.json({ error: 'URL information not found for this code.' }, { status: 404 });
+    const headers: Record<string, string> = {
+      'x-forwarded-for': request.headers.get('x-forwarded-for') || '127.0.0.1',
+      'user-agent': request.headers.get('user-agent') || '',
+      'referer': request.headers.get('referer') || '',
+    };
+    const passwordHeader = request.headers.get('x-link-password');
+    if (passwordHeader) {
+      headers['x-link-password'] = passwordHeader;
     }
 
+    const searchParams = request.nextUrl.searchParams.toString();
+    const queryStr = searchParams ? `?${searchParams}` : '';
+
+    const res = await fetch(`http://localhost:1888/api/url-info/${code}${queryStr}`, {
+      headers,
+    });
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status });
   } catch (error) {
-    console.error(`Error fetching URL info for code ${code}:`, error);
+    console.error(`Error fetching proxy URL info for code ${code}:`, error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
-  // Disconnect Prisma if needed
-  // finally {
-  //   await prisma.$disconnect();
-  // }
 }
