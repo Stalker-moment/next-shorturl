@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { Turnstile } from '@marsidev/react-turnstile';
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLink, faEye, faEyeSlash, faSpinner, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { useTheme } from 'next-themes';
@@ -23,6 +23,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -61,6 +62,8 @@ const LoginPage = () => {
       if (res?.error) {
         setError(t("auth.login.err_credentials"));
         setLoading(false);
+        setTurnstileToken(null);
+        turnstileRef.current?.reset();
       } else {
         router.push('/manage');
         router.refresh();
@@ -69,6 +72,8 @@ const LoginPage = () => {
       console.error("Login component error:", err);
       setError(t("auth.login.err_system"));
       setLoading(false);
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
     }
   };
 
@@ -179,8 +184,11 @@ const LoginPage = () => {
 
               <div className="flex justify-center py-2">
                 <Turnstile
+                  ref={turnstileRef}
                   siteKey={process.env.NODE_ENV === 'development' ? '1x00000000000000000000AA' : (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "")}
                   onSuccess={(token) => setTurnstileToken(token)}
+                  onError={() => setTurnstileToken(null)}
+                  onExpire={() => setTurnstileToken(null)}
                   options={{ theme: theme === 'dark' ? 'dark' : 'light' }}
                 />
               </div>
