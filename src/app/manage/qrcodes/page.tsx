@@ -294,7 +294,7 @@ export default function QrCodesPage() {
         {isCreating && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsCreating(false)} className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-[40px] p-8 sm:p-10 relative z-10 shadow-2xl border border-white/10 text-left">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-[40px] p-8 sm:p-10 relative z-10 max-h-[calc(100vh-3rem)] overflow-y-auto custom-scrollbar shadow-2xl border border-white/10 text-left">
               <h2 className="text-2xl font-bold mb-8">{t("qrcode.form.title")}</h2>
               
               <div className="grid grid-cols-4 gap-2 mb-10 p-1.5 bg-slate-100 dark:bg-white/5 rounded-2xl">
@@ -345,7 +345,7 @@ export default function QrCodesPage() {
         {sharingQr && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSharingQr(null)} className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-md bg-white dark:bg-slate-900 rounded-[40px] p-10 relative z-10 shadow-2xl border border-white/5 text-center">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-md bg-white dark:bg-slate-900 rounded-[40px] p-10 relative z-10 max-h-[calc(100vh-3rem)] overflow-y-auto custom-scrollbar shadow-2xl border border-white/5 text-center">
               <div className="relative mb-10">
                 <div className="p-4 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl inline-block border border-slate-100 dark:border-white/5">
                   <DynamicQR 
@@ -367,7 +367,7 @@ export default function QrCodesPage() {
         {deleteConfirmId && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-red-950/60 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="bg-white dark:bg-slate-900 rounded-[32px] p-10 max-w-sm w-full relative z-10 text-center shadow-2xl">
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="bg-white dark:bg-slate-900 rounded-[32px] p-10 max-w-sm w-full relative z-10 max-h-[calc(100vh-3rem)] overflow-y-auto custom-scrollbar text-center shadow-2xl">
               <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 mx-auto mb-6 text-xl"><FontAwesomeIcon icon={faTrash} /></div>
               <h3 className="text-xl font-bold mb-2">{language === 'en' ? "Delete this QR Code?" : "Hapus QR Code ini?"}</h3>
               <p className="text-slate-500 text-sm mb-10 leading-relaxed">{language === 'en' ? "Deleted QR Codes cannot be recovered. Make sure you are sure before continuing." : "QR Code yang sudah dihapus tidak bisa dikembalikan. Pastikan kamu yakin sebelum melanjutkan."}</p>

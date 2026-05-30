@@ -103,6 +103,21 @@ function ProfilePageContent() {
     else if (status === "unauthenticated") router.push("/login");
   }, [status, fetchProfile, router]);
 
+  // Lock body and html scroll when cropper modal is open
+  useEffect(() => {
+    if (imageSrc) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [imageSrc]);
+
   // If this window is a Google login popup, notify parent and close
   useEffect(() => {
     if (typeof window !== "undefined" && window.opener && window.name === "google-login-popup") {
@@ -317,7 +332,7 @@ function ProfilePageContent() {
  if (!profile) return null;
 
  return (
-  <div className="w-full animate-fade-in text-slate-900 dark:text-white selection:bg-indigo-500/30 flex justify-center relative font-sans">
+  <div className="w-full overflow-x-hidden animate-fade-in text-slate-900 dark:text-white selection:bg-indigo-500/30 flex justify-center relative font-sans">
     {/* Background Glow Ambience */}
     <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-violet-600/10 dark:bg-violet-600/5 rounded-full blur-[140px] pointer-events-none" />
     <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] bg-indigo-600/10 dark:bg-indigo-600/5 rounded-full blur-[140px] pointer-events-none" />
@@ -459,7 +474,7 @@ function ProfilePageContent() {
                   {isUnlinkingGoogle ? <FontAwesomeIcon icon={faSpinner} className="animate-spin text-xs" /> : t("profile.google.btn_unlink")}
                 </button>
               ) : (
-                <div className="w-full sm:w-auto sm:max-w-[200px] shrink-0">
+                <div className="w-full sm:w-auto min-w-[240px] flex items-center justify-center sm:justify-end shrink-0">
                   <GoogleSignInButton mode="link" onSuccess={handleGoogleLinkSuccess} onError={handleGoogleLinkError} />
                 </div>
               )}
@@ -591,7 +606,7 @@ function ProfilePageContent() {
             initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
-            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative flex flex-col"
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-md max-h-[calc(100vh-2rem)] overflow-y-auto custom-scrollbar relative flex flex-col"
           >
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
               <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">

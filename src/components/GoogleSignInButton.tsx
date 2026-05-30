@@ -95,11 +95,15 @@ export default function GoogleSignInButton({
       // Clear container before rendering
       containerRef.current.innerHTML = "";
 
+      // Responsive width: 240px for links/mobile, 320px for desktop login/signup
+      const isMobile = typeof window !== "undefined" && window.innerWidth < 440;
+      const buttonWidth = mode === "link" ? 240 : (isMobile ? 240 : 320);
+
       window.google.accounts.id.renderButton(containerRef.current, {
         theme: theme === "dark" ? "filled_black" : "outline",
         size: "large",
         shape: "rectangular",
-        width: mode === "link" ? 240 : 320,
+        width: buttonWidth,
         text: mode === "signup" ? "signup_with" : (mode === "link" ? "continue_with" : "signin_with"),
         logo_alignment: "left",
       });

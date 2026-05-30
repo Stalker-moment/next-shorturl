@@ -14,7 +14,7 @@ const Navbar = () => {
   const { data: session } = useSession();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const navLinks = [
     { label: t('nav.features'), path: '/#features' },
@@ -69,8 +69,10 @@ const Navbar = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <LanguageToggle />
-            <ThemeToggle />
+            <div className="hidden lg:flex items-center gap-3">
+              <LanguageToggle />
+              <ThemeToggle />
+            </div>
             {session ? (
               <Link
                 href="/manage"
@@ -143,6 +145,16 @@ const Navbar = () => {
                     </Link>
                   ))}
                 </nav>
+
+                <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    {language === 'en' ? 'Settings' : 'Pengaturan'}
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <LanguageToggle />
+                    <ThemeToggle />
+                  </div>
+                </div>
 
                 {!session && (
                   <div className="px-4 pb-4 pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">

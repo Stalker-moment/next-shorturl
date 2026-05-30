@@ -500,7 +500,7 @@ export default function UserPastebinDashboard() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-2xl text-slate-900 dark:text-white"
+              className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] border border-slate-200 dark:border-slate-800 max-h-[calc(100vh-3rem)] overflow-y-auto custom-scrollbar shadow-2xl text-slate-900 dark:text-white"
             >
               <div className="p-6 sm:p-8 space-y-6">
                 

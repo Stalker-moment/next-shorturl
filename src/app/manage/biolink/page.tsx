@@ -19,6 +19,7 @@ import {
   faUser,
   faShareNodes,
   faTrashAlt,
+  faEye,
 } from "@fortawesome/free-solid-svg-icons";
 import Cropper from "react-easy-crop";
 import { PRESET_THEMES, resolveTheme, encodeCustomTheme } from "@/lib/themes";
@@ -1105,6 +1106,24 @@ export default function BiolinkDashboard() {
     "links",
   );
 
+  // Mobile preview modal state
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
+
+  // Lock body scroll when mobile preview is open to prevent double scrollbars
+  useEffect(() => {
+    if (showMobilePreview) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [showMobilePreview]);
+
   // Design sub-tabs
   const [designTab, setDesignTab] = useState<
     "template" | "background" | "button" | "font"
@@ -1958,26 +1977,10 @@ export default function BiolinkDashboard() {
           <div className="flex-1 flex flex-col xl:flex-row min-w-0 gap-0 xl:gap-4">
             {/* ========== CENTER CONTENT ========== */}
             <main
-              className={`
-    z-40 flex-1 flex flex-col min-w-0
-    fixed inset-x-0 bottom-0 lg:relative lg:bottom-auto lg:inset-x-auto
-    bg-white/40 dark:bg-slate-900/40 backdrop-blur-3xl lg:bg-transparent
-    transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
-    rounded-t-[2.5rem] lg:rounded-none
-    shadow-[0_-20px_50px_rgba(0,0,0,0.3)] lg:shadow-none
-    border-t border-slate-200/50 dark:border-white/5 lg:border-none
-    h-[68vh] lg:h-[calc(100vh-56px)] lg:overflow-y-auto
-    pb-4 lg:pb-12
-    ${isSheetExpanded ? "translate-y-0 lg:transform-none" : "translate-y-[calc(68vh-196px)] lg:transform-none"}
-  `}
+              className="z-40 flex-1 flex flex-col min-w-0 lg:h-[calc(100vh-56px)] lg:overflow-y-auto pb-4 lg:pb-12"
             >
               {/* Drag Handle for Mobile Sheet */}
-              <div
-                className="xl:hidden flex-shrink-0 w-full flex justify-center pt-5 pb-3 cursor-pointer relative"
-                onClick={() => setIsSheetExpanded(!isSheetExpanded)}
-              >
-                <div className="w-12 h-1.5 bg-slate-900/10 dark:bg-white/20 hover:bg-white/40 rounded-full transition-colors" />
-              </div>
+              <div className="hidden" />
 
               <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 xl:px-4 pb-36 xl:pb-6 xl:pt-6">
                 {/* Top Management Tabs - Desktop only (sticky top) */}
@@ -2075,18 +2078,30 @@ export default function BiolinkDashboard() {
                               />
                             </button>
                             {username && (
-                              <button
-                                onClick={() =>
-                                  window.open(`/t/${username}`, "_blank")
-                                }
-                                className="w-12 h-12 bg-violet-600 text-white rounded-2xl flex items-center justify-center hover:bg-violet-500 transition-all hover:scale-110 shadow-lg shadow-violet-600/30"
-                                title="Buka Halaman"
-                              >
-                                <FontAwesomeIcon
-                                  icon={faExternalLinkAlt}
-                                  className="text-lg"
-                                />
-                              </button>
+                              <>
+                                <button
+                                  onClick={() => setShowMobilePreview(true)}
+                                  className="xl:hidden w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center hover:bg-indigo-500 transition-all hover:scale-110 shadow-lg shadow-indigo-600/30"
+                                  title="Lihat Pratinjau"
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faEye}
+                                    className="text-lg"
+                                  />
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    window.open(`/t/${username}`, "_blank")
+                                  }
+                                  className="w-12 h-12 bg-violet-600 text-white rounded-2xl flex items-center justify-center hover:bg-violet-500 transition-all hover:scale-110 shadow-lg shadow-violet-600/30"
+                                  title="Buka Halaman"
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faExternalLinkAlt}
+                                    className="text-lg"
+                                  />
+                                </button>
+                              </>
                             )}
                           </div>
                         </div>
@@ -2965,11 +2980,9 @@ export default function BiolinkDashboard() {
             </main>
             {/* ========== RIGHT SIDEBAR - PHONE PREVIEW ========== */}
             <aside
-              className={`fixed top-[88px] left-0 right-0 flex items-center justify-center z-0 xl:static xl:h-auto xl:w-[450px] xl:border-l xl:border-slate-200 dark:border-white/5 xl:p-6 xl:flex-shrink-0 bg-transparent overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] ${isSheetExpanded ? "h-[22vh]" : "h-[calc(100vh-284px)]"}`}
+              className="hidden xl:flex xl:static xl:h-auto xl:w-[450px] xl:border-l xl:border-slate-200 dark:border-white/5 xl:p-6 xl:flex-shrink-0 bg-transparent overflow-hidden"
             >
-              <div
-                className={`w-full max-w-[320px] xl:max-w-[340px] transform transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] origin-center pointer-events-none xl:pointer-events-auto ${isSheetExpanded ? "scale-[0.42] sm:scale-[0.48] md:scale-[0.55] mt-0 xl:scale-100" : "scale-[0.90] sm:scale-[0.94] md:scale-[0.97] mt-0 xl:scale-110 xl:mt-0"}`}
-              >
+              <div className="w-full max-w-[340px] xl:scale-110 origin-center">
                 <div className="xl:sticky top-24 pointer-events-auto">
                   <div className="hidden xl:flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
@@ -3283,6 +3296,277 @@ export default function BiolinkDashboard() {
             </aside>
           </div>
         </div>
+
+        {/* Mobile Floating Preview Button */}
+        {username && (
+          <div className="xl:hidden fixed bottom-6 right-6 z-[99]">
+            <button
+              onClick={() => setShowMobilePreview(true)}
+              className="flex items-center gap-2.5 px-5 py-4 bg-gradient-to-r from-violet-600 to-indigo-650 hover:from-violet-550 hover:to-indigo-550 text-white rounded-full font-black text-xs uppercase tracking-widest shadow-[0_10px_30px_rgba(124,58,237,0.4)] active:scale-95 transition-all border border-white/20 cursor-pointer"
+            >
+              <FontAwesomeIcon icon={faEye} className="text-sm" />
+              <span>Preview</span>
+            </button>
+          </div>
+        )}
+
+        {/* Mobile Live Preview Modal */}
+        <AnimatePresence>
+          {showMobilePreview && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="xl:hidden fixed inset-0 z-[1000] bg-slate-950/70 backdrop-blur-xl flex items-center justify-center p-4"
+            >
+              {/* Tap backdrop to close */}
+              <div 
+                className="absolute inset-0 z-0" 
+                onClick={() => setShowMobilePreview(false)}
+              />
+              
+              <motion.div
+                initial={{ scale: 0.9, y: 30, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                exit={{ scale: 0.9, y: 30, opacity: 0 }}
+                transition={{ type: "spring", damping: 25, stiffness: 350 }}
+                className="bg-white/10 dark:bg-slate-955/40 border border-white/10 dark:border-white/5 rounded-[3rem] p-6 max-w-sm w-full relative z-10 flex flex-col items-center justify-center shadow-2xl backdrop-blur-2xl"
+              >
+                {/* Tutup Button */}
+                <button
+                  onClick={() => setShowMobilePreview(false)}
+                  className="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-all z-[110] shadow-lg border border-white/10 cursor-pointer active:scale-95"
+                >
+                  <FontAwesomeIcon icon={faTimes} className="text-sm" />
+                </button>
+
+                <div className="w-full text-center mb-4">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-200 bg-white/10 px-4 py-1.5 rounded-full border border-white/5 shadow-inner">
+                    📱 {language === "en" ? "Live Preview" : "Pratinjau Langsung"}
+                  </span>
+                </div>
+
+                {/* Phone Frame - Premium iPhone 15 Pro Look */}
+                <div className="w-full max-w-[320px] scale-95 origin-center">
+                  <div className="bg-[#1e1e24] dark:bg-[#0a0a0c] rounded-[3.5rem] p-1.5 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] border-[1.5px] border-slate-600/30 relative ring-[6px] ring-slate-800/90 shadow-2xl transition-all duration-700">
+                    {/* Physical Buttons - Left Side (Action + Volume) */}
+                    <div className="absolute -left-[9px] top-28 w-[3px] h-8 bg-gradient-to-b from-slate-600 to-slate-800 rounded-l shadow-sm" />
+                    <div className="absolute -left-[9px] top-[148px] w-[3px] h-14 bg-gradient-to-b from-slate-600 to-slate-800 rounded-l shadow-sm" />
+                    <div className="absolute -left-[9px] top-[216px] w-[3px] h-14 bg-gradient-to-b from-slate-600 to-slate-800 rounded-l shadow-sm" />
+                    {/* Physical Buttons - Right Side (Power) */}
+                    <div className="absolute -right-[9px] top-40 w-[3px] h-24 bg-gradient-to-b from-slate-600 to-slate-800 rounded-r shadow-sm" />
+                    
+                    {/* Dynamic Island */}
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[100px] h-8 bg-black rounded-full z-[100] flex items-center justify-end px-4 shadow-xl border border-white/5">
+                      <div className="w-2.5 h-2.5 bg-[#080808] rounded-full border border-white/5 flex items-center justify-center">
+                        <div className="w-1 h-1 bg-[#1a1a2e] rounded-full opacity-40" />
+                      </div>
+                    </div>
+
+                    {/* Inner Display Container */}
+                    <div
+                      className={`w-full ${!bgType ? resolvedTheme.bg : ""} ${resolvedTheme.text} rounded-[3rem] overflow-hidden flex flex-col items-center relative transition-all duration-700 shadow-inner`}
+                      style={{
+                        minHeight: "560px",
+                        maxHeight: "560px",
+                        fontFamily: getFontFamilyStyle(fontFamily),
+                        ...(resolvedTheme.bgStyle || {}),
+                        ...previewBgStyle,
+                      }}
+                    >
+                      {/* Status bar - iOS Style */}
+                      <div className="w-full flex justify-between items-center px-10 pt-5 pb-2 text-[10px] font-bold tracking-tight z-50">
+                        <span className="opacity-90">
+                          {currentTime
+                            .toLocaleTimeString("id-ID", {
+                              hour12: false,
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })
+                            .replace(".", ":")}
+                        </span>
+                        <div className="flex gap-1.5 items-center opacity-90">
+                          <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21l-12-18h24z" />
+                          </svg>
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M2 20h20v-2h-20v2zm0-4h20v-2h-20v2zm0-4h20v-2h-20v2zm0-4h20v-2h-20v2z" opacity=".3" />
+                            <path d="M2 20h20v-2h-15v2z" />
+                          </svg>
+                          <div className="w-6 h-3 border-[1.5px] border-current rounded-[4px] p-[1px] relative">
+                            <div className="w-full h-full bg-current rounded-[1px]" />
+                            <div className="absolute -right-[3.5px] top-1/2 -translate-y-1/2 w-[1.5px] h-[3px] bg-current rounded-r-sm" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Profile Area */}
+                      <div className="flex flex-col items-center mt-8 px-8 w-full">
+                        <div className="w-20 h-20 bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl flex items-center justify-center font-bold text-3xl text-slate-900 dark:text-white shadow-2xl border-2 border-white/20 overflow-hidden mb-4">
+                          {avatar ? (
+                            <img src={avatar} className="w-full h-full object-cover" alt="pfp" />
+                          ) : (
+                            username?.[0]?.toUpperCase() || "N"
+                          )}
+                        </div>
+                        <h3 className="font-bold text-base tracking-tight mb-1">
+                          @{username || "username"}
+                        </h3>
+                        {bio && (
+                          <p className={`text-[10px] font-medium text-center max-w-[200px] leading-relaxed break-words line-clamp-2 opacity-90 tracking-wide ${resolvedTheme.sub}`}>
+                            {bio}
+                          </p>
+                        )}
+
+                        {/* Preview Socials */}
+                        {Object.values(socials).some((val) => val) && (
+                          <div className="flex flex-wrap justify-center gap-2 mt-4 mb-1">
+                            {[
+                              "instagram",
+                              "youtube",
+                              "tiktok",
+                              "facebook",
+                              "linkedin",
+                              "github",
+                              "whatsapp",
+                            ].map((soc) => {
+                              if (!socials[soc]) return null;
+                              return (
+                                <div key={soc} className="w-8 h-8 rounded-xl glass dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0">
+                                  <img
+                                    src={`https://cdn.simpleicons.org/${soc}/${soc === "github" || soc === "tiktok" ? "white" : soc !== "whatsapp" ? "default" : "25D366"}`}
+                                    className="w-4 h-4 object-contain"
+                                    style={{ filter: "brightness(1) invert(1)" }}
+                                    alt={soc}
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Links Preview */}
+                      <div className="mt-6 w-full space-y-4 overflow-y-auto pb-8 px-8 flex-1 no-scrollbar">
+                        {activeLinks.length === 0 && (
+                          <div className="text-center py-10 opacity-30 flex flex-col items-center gap-2">
+                            <FontAwesomeIcon icon={faSearch} className="text-2xl" />
+                            <p className="text-[10px] font-bold">
+                              {language === 'en' ? "You haven't created any links yet" : "Kamu belum bikin link"}
+                            </p>
+                          </div>
+                        )}
+                        {(() => {
+                          const roots = activeLinks.filter((l) => !l.parentId);
+
+                          return roots.map((root) => {
+                            const isHeader = root.type === "header";
+
+                            if (!isHeader) {
+                              const l = root;
+                              return (
+                                <div
+                                  key={l.id}
+                                  className={`w-full font-bold text-[10px] flex shadow-xl mb-3 ${l.layout === "featured" ? "flex-col p-0 overflow-hidden" : "flex-row items-center justify-center gap-2.5 p-3"} ${buttonStyle === "outline" ? "border-2" : ""} ${!buttonStyle?.includes("rounded") ? "rounded-2xl" : ""} ${resolvedTheme.item}`}
+                                  style={{ ...previewButtonStyle }}
+                                >
+                                  {l.thumbnail && (
+                                    <div className={l.layout === "featured" ? "w-full aspect-[16/9] mb-2" : ""}>
+                                      <img
+                                        src={l.thumbnail}
+                                        className={l.layout === "featured" ? "w-full h-full object-cover" : "w-5 h-5 rounded-lg object-cover"}
+                                        alt="icon"
+                                      />
+                                    </div>
+                                  )}
+                                  <span className="truncate px-1">{l.title}</span>
+                                </div>
+                              );
+                            } else {
+                              const headerLink = root;
+                              const children = activeLinks.filter((l) => l.parentId === headerLink.id);
+                              return (
+                                <div key={headerLink.id} className="w-full mb-5 text-center">
+                                  <h4 className={`text-xs font-black tracking-wider uppercase mb-3 ${resolvedTheme.text}`}>
+                                    {headerLink.title}
+                                  </h4>
+                                  <div className={
+                                    headerLink.layout === "grid"
+                                      ? "grid grid-cols-2 gap-3 w-full"
+                                      : headerLink.layout === "carousel"
+                                        ? "flex gap-3 overflow-x-auto no-scrollbar w-full pb-2"
+                                        : "flex flex-col gap-3 w-full"
+                                  }>
+                                    {children.map((l) => (
+                                      <div
+                                        key={l.id}
+                                        className={`
+                                          ${
+                                            headerLink.layout === "grid"
+                                              ? "flex-col gap-2.5 py-4 text-center w-full"
+                                              : headerLink.layout === "carousel"
+                                                ? "flex-col gap-2.5 py-4 text-center min-w-[110px] max-w-[110px] shrink-0"
+                                                : headerLink.layout === "showcase"
+                                                  ? "flex-col gap-4 py-8 text-center w-full"
+                                                  : l.layout === "featured"
+                                                    ? "flex-col p-0 w-full overflow-hidden"
+                                                    : "w-full p-3 flex-row items-center justify-center gap-2.5"
+                                          }
+                                          flex shadow-2xl font-bold text-[10px]
+                                          ${buttonStyle === "outline" ? "border-2" : ""}
+                                          ${!buttonStyle?.includes("rounded") ? (headerLink.layout === "stack" || !headerLink.layout ? "rounded-[1.25rem]" : "rounded-3xl") : ""}
+                                          ${resolvedTheme.item}
+                                        `}
+                                        style={{ ...previewButtonStyle }}
+                                      >
+                                        {l.thumbnail && (
+                                          <div className={
+                                            l.layout === "featured" && (headerLink.layout === "stack" || !headerLink.layout)
+                                              ? "w-full aspect-[16/9]"
+                                              : ""
+                                          }>
+                                            <img
+                                              src={l.thumbnail}
+                                              className={`
+                                                ${
+                                                  headerLink.layout === "grid" || headerLink.layout === "carousel"
+                                                    ? "w-10 h-10 mb-1 rounded-xl"
+                                                    : headerLink.layout === "showcase"
+                                                      ? "w-16 h-16 rounded-xl mb-1"
+                                                      : l.layout === "featured"
+                                                        ? "w-full h-full object-cover"
+                                                        : "w-5 h-5 rounded-lg"
+                                                }
+                                                object-cover flex-shrink-0 border border-white/10 shadow-lg
+                                              `}
+                                              alt="icon"
+                                            />
+                                          </div>
+                                        )}
+                                        <span className="truncate px-1">{l.title}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            }
+                          });
+                        })()}
+                      </div>
+
+                      {/* Footer Logo */}
+                      <div className={`absolute bottom-4 px-6 py-2 glass dark:bg-black/20 rounded-full border border-slate-200/50 dark:border-white/5 text-[9px] font-bold opacity-40 flex items-center gap-2 ${resolvedTheme.sub}`}>
+                        <div className="w-4 h-4 bg-violet-600 rounded flex items-center justify-center text-white">N</div>
+                        NYOO.ME
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* ========== MODALS ========== */}
         {/* Delete Confirmation Modal */}
         <AnimatePresence>
@@ -3298,7 +3582,7 @@ export default function BiolinkDashboard() {
                 animate={{ scale: 1, y: 0, opacity: 1 }}
                 exit={{ scale: 0.9, y: 30, opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 350 }}
-                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-[2.5rem] w-full max-w-sm overflow-hidden shadow-[0_30px_100px_-20px_rgba(0,0,0,0.5)]"
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-[2.5rem] w-full max-w-sm max-h-[calc(100vh-3rem)] overflow-y-auto custom-scrollbar shadow-[0_30px_100px_-20px_rgba(0,0,0,0.5)]"
               >
                 <div className="p-8 sm:p-10 text-center space-y-6">
                   <div className="w-20 h-20 bg-red-500/10 text-red-500 rounded-3xl flex items-center justify-center mx-auto text-3xl shadow-inner border border-red-500/20">
@@ -3345,7 +3629,7 @@ export default function BiolinkDashboard() {
                 animate={{ scale: 1, y: 0, opacity: 1 }}
                 exit={{ scale: 0.9, y: 50, opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="glass dark:bg-slate-900/60 border border-slate-200 dark:border-white/10 rounded-3xl w-full max-w-xl overflow-hidden flex flex-col h-[700px] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.6)]"
+                className="glass dark:bg-slate-900/60 border border-slate-200 dark:border-white/10 rounded-3xl w-full max-w-xl overflow-hidden flex flex-col max-h-[calc(100vh-2rem)] overflow-y-auto custom-scrollbar shadow-[0_50px_100px_-20px_rgba(0,0,0,0.6)]"
               >
                 <div className="p-8 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-white/5">
                   <div>
@@ -3508,6 +3792,202 @@ export default function BiolinkDashboard() {
             </motion.div>
           )}
         </AnimatePresence>
+        {/* Floating Mobile Preview Button */}
+        <div className="lg:hidden fixed bottom-24 right-6 z-[160]">
+          <button
+            onClick={() => setShowMobilePreview(true)}
+            className="w-14 h-14 bg-violet-600 hover:bg-violet-500 text-white rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(124,58,237,0.4)] border-2 border-white/20 active:scale-95 transition-all cursor-pointer"
+            title={language === 'en' ? "Live Preview" : "Tinjau Live"}
+          >
+            <FontAwesomeIcon icon={faEye} className="text-xl" />
+          </button>
+        </div>
+
+        {/* Mobile Preview Modal */}
+        <AnimatePresence>
+          {showMobilePreview && (
+            <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 lg:hidden">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowMobilePreview(false)}
+                className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
+              />
+              <motion.div
+                initial={{ scale: 0.9, y: 50, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                exit={{ scale: 0.9, y: 50, opacity: 0 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                className="w-full max-w-[320px] sm:max-w-[340px] relative z-10 flex flex-col items-center"
+              >
+                {/* Close Button */}
+                <button
+                  onClick={() => setShowMobilePreview(false)}
+                  className="absolute -top-12 right-2 w-10 h-10 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center border border-white/10 transition-all active:scale-90 cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faTimes} />
+                </button>
+
+                {/* Phone Mockup Content */}
+                <div className="bg-[#1e1e24] dark:bg-[#0a0a0c] rounded-[3.5rem] p-1.5 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] border-[1.5px] border-slate-600/30 relative ring-[6px] ring-slate-800/90 shadow-2xl transition-all duration-700 w-full">
+                  {/* Physical Buttons - Left Side */}
+                  <div className="absolute -left-[9px] top-28 w-[3px] h-8 bg-gradient-to-b from-slate-600 to-slate-800 rounded-l shadow-sm" />
+                  <div className="absolute -left-[9px] top-[148px] w-[3px] h-14 bg-gradient-to-b from-slate-600 to-slate-800 rounded-l shadow-sm" />
+                  <div className="absolute -left-[9px] top-[216px] w-[3px] h-14 bg-gradient-to-b from-slate-600 to-slate-800 rounded-l shadow-sm" />
+                  {/* Physical Buttons - Right Side */}
+                  <div className="absolute -right-[9px] top-40 w-[3px] h-24 bg-gradient-to-b from-slate-600 to-slate-800 rounded-r shadow-sm" />
+                  {/* Dynamic Island */}
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[100px] h-8 bg-black rounded-full z-[100] flex items-center justify-end px-4 shadow-xl border border-white/5">
+                    <div className="w-2.5 h-2.5 bg-[#080808] rounded-full border border-white/5 flex items-center justify-center">
+                      <div className="w-1 h-1 bg-[#1a1a2e] rounded-full opacity-40" />
+                    </div>
+                  </div>
+                  
+                  {/* Inner Display Container */}
+                  <div
+                    className={`w-full ${!bgType ? resolvedTheme.bg : ""} ${resolvedTheme.text} rounded-[3rem] overflow-hidden flex flex-col items-center relative transition-all duration-700 shadow-inner`}
+                    style={{
+                      minHeight: "560px",
+                      maxHeight: "560px",
+                      fontFamily: getFontFamilyStyle(fontFamily),
+                      ...(resolvedTheme.bgStyle || {}),
+                      ...previewBgStyle,
+                    }}
+                  >
+                    {/* Status bar - iOS Style */}
+                    <div className="w-full flex justify-between items-center px-10 pt-5 pb-2 text-[10px] sm:text-[11px] font-bold tracking-tight z-50">
+                      <span className="opacity-90">
+                        {currentTime
+                          .toLocaleTimeString("id-ID", {
+                            hour12: false,
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                          .replace(".", ":")}
+                      </span>
+                      <div className="flex gap-1.5 items-center opacity-90">
+                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 21l-12-18h24z" />
+                        </svg>
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M2 20h20v-2h-20v2zm0-4h20v-2h-20v2zm0-4h20v-2h-20v2zm0-4h20v-2h-20v2z" opacity=".3" />
+                          <path d="M2 20h20v-2h-20v2zm0-4h15v-2h-15v2zm0-4h10v-2h-10v2zm0-4h5v-2h-5v2z" />
+                        </svg>
+                        <div className="w-6 h-3 border-[1.5px] border-current rounded-[4px] p-[1px] relative">
+                          <div className="w-full h-full bg-current rounded-[1px]" />
+                          <div className="absolute -right-[3.5px] top-1/2 -translate-y-1/2 w-[1.5px] h-[3px] bg-current rounded-r-sm" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Profile Area */}
+                    <div className="flex flex-col items-center mt-8 px-8 w-full">
+                      <div className="w-20 h-20 bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl flex items-center justify-center font-bold text-3xl text-white shadow-xl border-2 border-white/20 overflow-hidden mb-4">
+                        {avatar ? (
+                          <img src={avatar} className="w-full h-full object-cover" alt="pfp" />
+                        ) : (
+                          username?.[0]?.toUpperCase() || "N"
+                        )}
+                      </div>
+                      <h3 className="font-bold text-base tracking-tight mb-1">
+                        @{username || "username"}
+                      </h3>
+                      {bio && (
+                        <p className={`text-[10px] font-medium text-center max-w-[220px] leading-relaxed break-words line-clamp-2 opacity-90 tracking-wide ${resolvedTheme.sub}`}>
+                          {bio}
+                        </p>
+                      )}
+
+                      {/* Preview Socials */}
+                      {Object.values(socials).some((val) => val) && (
+                        <div className="flex flex-wrap justify-center gap-2 mt-4 mb-1">
+                          {[
+                            "instagram",
+                            "youtube",
+                            "tiktok",
+                            "facebook",
+                            "linkedin",
+                            "github",
+                            "whatsapp",
+                          ].map((soc) => {
+                            if (!socials[soc]) return null;
+                            return (
+                              <div key={soc} className="w-8 h-8 rounded-xl glass dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0">
+                                <img
+                                  src={`https://cdn.simpleicons.org/${soc}/${soc === "github" || soc === "tiktok" ? "white" : soc !== "whatsapp" ? "default" : "25D366"}`}
+                                  className="w-4 h-4 object-contain"
+                                  style={{ filter: "brightness(1) invert(1)" }}
+                                  alt={soc}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Links Preview */}
+                    <div className="mt-6 w-full space-y-4 overflow-y-auto pb-8 px-8 flex-1 no-scrollbar">
+                      {activeLinks.length === 0 && (
+                        <div className="text-center py-10 opacity-30 flex flex-col items-center gap-3">
+                          <FontAwesomeIcon icon={faSearch} className="text-2xl" />
+                          <p className="text-[10px] font-bold">
+                            {language === 'en' ? "You haven't created any links yet" : "Kamu belum bikin link"}
+                          </p>
+                        </div>
+                      )}
+                      {(() => {
+                        const roots = activeLinks.filter((l) => !l.parentId);
+                        return roots.map((root) => {
+                          const isHeader = root.type === "header";
+                          if (!isHeader) {
+                            const l = root;
+                            return (
+                              <div
+                                key={l.id}
+                                className={`w-full font-bold text-[10px] flex items-center justify-center gap-2 p-3 ${buttonStyle === "outline" ? "border-2" : ""} ${!buttonStyle?.includes("rounded") ? "rounded-xl" : ""} ${resolvedTheme.item}`}
+                                style={{ ...previewButtonStyle }}
+                              >
+                                {l.thumbnail && (
+                                  <img src={l.thumbnail} className="w-5 h-5 rounded-lg object-cover flex-shrink-0 shadow-md" alt="" />
+                                )}
+                                <span className="truncate max-w-[80%]">{l.title}</span>
+                              </div>
+                            );
+                          } else {
+                            const headerLink = root;
+                            const children = activeLinks.filter((child) => child.parentId === headerLink.id);
+                            return (
+                              <div key={headerLink.id} className="w-full rounded-xl p-4 mb-4 glass dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-lg relative overflow-hidden">
+                                <h3 className="font-bold text-[8px] mb-3 opacity-60">{headerLink.title}</h3>
+                                <div className="space-y-3">
+                                  {children.map((l) => (
+                                    <div
+                                      key={l.id}
+                                      className={`w-full p-3 flex items-center justify-center gap-2 font-bold text-[9px] ${buttonStyle === "outline" ? "border-2" : ""} ${!buttonStyle?.includes("rounded") ? "rounded-xl" : ""} ${resolvedTheme.item}`}
+                                      style={{ ...previewButtonStyle }}
+                                    >
+                                      {l.thumbnail && (
+                                        <img src={l.thumbnail} className="w-5 h-5 rounded-lg object-cover flex-shrink-0 shadow-md" alt="" />
+                                      )}
+                                      <span className="truncate max-w-[90%]">{l.title}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          }
+                        });
+                      })()}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
         {/* ========== MOBILE BOTTOM TAB BAR ========== */}
         <nav
           className="lg:hidden fixed bottom-0 inset-x-0 z-[150] flex items-center justify-around px-4 py-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border-t border-slate-200/50 dark:border-white/5 shadow-[0_-10px_40px_rgba(0,0,0,0.15)]"

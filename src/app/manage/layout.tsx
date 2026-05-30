@@ -90,6 +90,14 @@ export default function ManageLayout({
     setIsHeaderVisible(true);
   }, [pathname]);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = showMobileMenu ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showMobileMenu]);
+
   if (status === "loading") {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center font-sans">
@@ -474,8 +482,6 @@ export default function ManageLayout({
               </div>
             </div>
             <div className="flex items-center gap-2.5">
-              <ThemeToggle />
-              <LanguageToggle />
               <Link
                 href="/manage/profile"
                 className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-0.5 overflow-hidden active:scale-95 transition-all shrink-0 relative"
